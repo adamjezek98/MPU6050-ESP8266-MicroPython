@@ -2,15 +2,16 @@ import machine
 
 
 class accel():
-    def __init__(self):
-        self.iic = machine.I2C(machine.Pin(5), machine.Pin(4))
+    def __init__(self, i2c, addr=0x68):
+        self.iic = i2c
+        self.addr = addr
         self.iic.start()
-        self.iic.writeto(0x68, bytearray([107, 0]))
+        self.iic.writeto(self.addr, bytearray([107, 0]))
         self.iic.stop()
 
     def get_raw_values(self):
         self.iic.start()
-        a = self.iic.readfrom_mem(0x68, 0x3B, 14)
+        a = self.iic.readfrom_mem(self.addr, 0x3B, 14)
         self.iic.stop()
         return a
 
@@ -40,5 +41,7 @@ class accel():
         # -32768 to 32767
 
     def val_test(self):  # ONLY FOR TESTING! Also, fast reading sometimes crashes IIC
+        from time import sleep
         while 1:
             print(self.get_values())
+            sleep(0.05)
