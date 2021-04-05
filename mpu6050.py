@@ -40,6 +40,29 @@ class accel():
         return vals  # returned in range of Int16
         # -32768 to 32767
 
+    def sleep(self):
+        self.iic.start()
+        self.iic.writeto_mem(self.addr, 0x6B, b'\x40')
+        self.iic.stop()
+        
+    def wakeup(self):
+        from time import sleep
+        self.iic.start()
+        self.iic.writeto_mem(self.addr, 0x6B, b'\x80')
+        self.iic.stop()
+        sleep(0.05)
+        self.iic.start()
+        self.iic.writeto_mem(self.addr, 0x68, b'\x07')
+        self.iic.stop()
+        sleep(0.05)
+        self.iic.start()
+        self.iic.writeto_mem(self.addr, 0x68, b'\x00')
+        self.iic.stop()
+        sleep(0.05)
+        self.iic.start()
+        self.iic.writeto_mem(self.addr, 0x6B, b'\x00')
+        self.iic.stop()
+
     def val_test(self):  # ONLY FOR TESTING! Also, fast reading sometimes crashes IIC
         from time import sleep
         while 1:
